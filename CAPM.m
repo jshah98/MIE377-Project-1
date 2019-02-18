@@ -40,7 +40,7 @@ temp = inv(transpose(X)* X)*transpose(X)*returns;
 % - residual variance (i.e., idiosyncratic risk)
 
 % Calculate the residuals
-epsilon = returns - X*temp;
+
 for i = 1:n
     for t = 1:N
     epsilon(t,i) = (returns(t,i)) - (alpha(i) + betaCF(i)*(expExFactRet(1))); 
