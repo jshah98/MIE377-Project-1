@@ -34,7 +34,7 @@ sigmaF = var(factRet);
 display(X);
 
 
-% 2.3 Use the closed-form (CF) solution to find the collection of alphas 
+Use the closed-form (CF) solution to find the collection of alphas 
 % and betas for all assets
 temp = inv(transpose(X)* X)*transpose(X)*returns;
  alpha  = temp(1,:);
