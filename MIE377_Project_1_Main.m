@@ -3,17 +3,17 @@
 % a) CAPM
 % b) Fama-French 3-factor model
 % c) Principal component analysis model
-% 
-% and to use these models to estimate the asset expected returns and 
-% covariance matrix. These parameters will then be used to test the 
-% out-of-sample performance of two portfolio optimization models: 
+%
+% and to use these models to estimate the asset expected returns and
+% covariance matrix. These parameters will then be used to test the
+% out-of-sample performance of two portfolio optimization models:
 % 1. MVO
 % 2. MVO with cardinality constraint
 %
 % Use can use this template to write your program.
 %
-% Student Name:
-% Student ID:
+% Student Name: Jinansh Shah, Joshua Chang
+% Student ID: 1003062614 (Jinansh), 1003083147 (Joshua)
 
 clc
 clear all
@@ -37,7 +37,7 @@ factorRet.Date = [];
 riskFree = factorRet(:,4);
 factorRet = factorRet(:,1:3);
 
-% Identify the tickers and the dates 
+% Identify the tickers and the dates
 tickers = adjClose.Properties.VariableNames';
 dates   = datetime(factorRet.Properties.RowNames);
 
@@ -56,11 +56,11 @@ returns.Properties.RowNames = cellstr(datetime(factorRet.Properties.RowNames));
 % Initial budget to invest
 initialVal = 100;
 
-% Start of in-sample calibration period 
+% Start of in-sample calibration period
 calStart = datetime('2012-01-01');
 calEnd   = calStart + calmonths(12) - days(1);
 
-% Start of out-of-sample test period 
+% Start of out-of-sample test period
 testStart = datetime('2013-01-01');
 testEnd   = testStart + calmonths(6) - days(1);
 
@@ -76,7 +76,7 @@ NoModels = length(FMList);
 
 % Investment strategies
 % Note: You must populate the functios MVO.m and MVO_card.m with your own
-% code to construct the optimal portfolios. 
+% code to construct the optimal portfolios.
 
 invList = {'MVO' 'MVO_card'};
 invList = cellfun(@str2func, invList, 'UniformOutput', false);
@@ -93,98 +93,98 @@ tags = {'MVO (CAPM)' 'Card MVO (CAPM)' 'MVO (FF)' 'Card MVO (FF)' ...
 %% 3. Construct and rebalance your portfolios
 %
 % Here you will estimate your input parameters (exp. returns, cov. matrix,
-% etc) from the Fama-French factor models. You will have to re-estimate 
-% your parameters at the start of each rebalance period, and then 
-% re-optimize and rebalance your portfolios accordingly. 
+% etc) from the Fama-French factor models. You will have to re-estimate
+% your parameters at the start of each rebalance period, and then
+% re-optimize and rebalance your portfolios accordingly.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initiate counter for the number of observations per investment period
 toDay = 0;
 
 for t = 1 : NoPeriods
-    
+
     % Subset the returns and factor returns corresponding to the current
     % calibration period.
     periodReturns = table2array( returns( calStart <= dates & dates <= calEnd, :) );
     periodFactRet = table2array( factorRet( calStart <= dates & dates <= calEnd, :) );
-    currentPrices = table2array( adjClose( ( calEnd - days(7) ) <= dates ... 
+    currentPrices = table2array( adjClose( ( calEnd - days(7) ) <= dates ...
                                                     & dates <= calEnd, :) )';
-    
-    % Subset the prices corresponding to the current out-of-sample test 
+
+    % Subset the prices corresponding to the current out-of-sample test
     % period.
     periodPrices = table2array( adjClose( testStart <= dates & dates <= testEnd,:) );
-    
+
     % Set the initial value of the portfolio or update the portfolio value
     if t == 1
-        
+
         currentVal(t,:) = initialVal;
-        
+
     else
         for k = 1 : (NoStrats * NoModels)
-            
+
             currentVal(t,k) = currentPrices .* NoShares{k};
-            
+
         end
     end
-    
+
     % Update counter for the number of observations per investment period
     fromDay = toDay + 1;
     toDay   = toDay + size(periodPrices,1);
-    
+
     % Calculate 'mu' and 'Q' using the 3 factor models.
-    % Note: You need to write the code for the 3 factor model functions. 
+    % Note: You need to write the code for the 3 factor model functions.
     for i = 1 : NoModels
-        
+
         [mu{i}, Q{i}] = FMList{i}(periodReturns, periodFactRet);
-        
+
     end
-            
+
     % Optimize your portfolios to get the weights 'x'
-    % Note: You need to write the code for the 2 portfolio optimization 
+    % Note: You need to write the code for the 2 portfolio optimization
     % functions.
     for i = 1 : NoModels
-        
+
         % Define the target return
         targetRet = mean(mu{i});
-        
+
         for j = 1: NoStrats
-            
+
             k = j + (i - 1) * 2;
-            
-            x{k}(:,t) = invList{j}(mu{i}, Q{i}, targetRet, card); 
-            
+
+            x{k}(:,t) = invList{j}(mu{i}, Q{i}, targetRet, card);
+
         end
     end
-    
+
     % Calculate the optimal number of shares of each stock you should hold
     for k = 1 : NoStrats * NoModels
-        
+
         % Number of shares your portfolio holds per stock
         NoShares{k} = x{k}(:,t) .* currentVal(t,k) ./ currentPrices;
-        
+
         % Weekly portfolio value during the out-of-sample window
         portfValue(fromDay:toDay,k) = periodPrices * NoShares{k};
-        
+
         %------------------------------------------------------------------
         % Calculate your transaction costs for the current rebalance
         % period. The first period does not have any cost since you are
-        % constructing the portfolios for the 1st time. 
-        
+        % constructing the portfolios for the 1st time.
+
         % if t ~= 1
-           
-        %    tCost(t-1, k) = 
-            
+
+        %    tCost(t-1, k) =
+
         % end
-        
+
         % NoSharesOld{k} = NoShares{k};
         %------------------------------------------------------------------
-        
+
     end
 
     % Update your calibration and out-of-sample test periods
     calStart = calStart + calmonths(6);
     calEnd   = calStart + calmonths(12) - days(1);
-    
+
     testStart = testStart + calmonths(6);
     testEnd   = testStart + calmonths(6) - days(1);
 
@@ -195,29 +195,29 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %--------------------------------------------------------------------------
-% 4.1 Calculate the portfolio average return, variance (or standard 
-% deviation), and any other performance and/or risk metric you wish to 
+% 4.1 Calculate the portfolio average return, variance (or standard
+% deviation), and any other performance and/or risk metric you wish to
 % include in your report.
 %--------------------------------------------------------------------------
 
 
 
 %--------------------------------------------------------------------------
-% 4.2 Plot the portfolio values 
-% 
+% 4.2 Plot the portfolio values
+%
 % Note: The code below plots all portfolios onto a single plot. However,
 % you may want to split this into multiple plots for clarity, or to
-% compare a subset of the portfolios. 
+% compare a subset of the portfolios.
 %--------------------------------------------------------------------------
 plotDates = dates(dates >= testStart);
 
 fig1 = figure(1);
 
 for k = 1 : NoModels * NoStrats
-    
+
     plot( plotDates, portfValue(:,k) )
     hold on
-    
+
 end
 
 legend(tags, 'Location', 'eastoutside','FontSize',12);
@@ -239,7 +239,7 @@ set(fig1,'PaperPositionMode','Auto','PaperUnits','Inches',...
 print(fig1,'fileName','-dpng','-r0');
 
 %--------------------------------------------------------------------------
-% 4.3 Plot the portfolio weights 
+% 4.3 Plot the portfolio weights
 %--------------------------------------------------------------------------
 
 % MVO (CAPM) Plot
