@@ -1,10 +1,6 @@
 function  [mu, Q] = CAPM(returns, factRet)
     
     % Use this function to perform a linear regression model for CAPM.
- 
-    % *************** WRITE YOUR CODE HERE ***************
-    %----------------------------------------------------------------------
-    % Number of assets
 
 % Number of observations;
 N = size(returns, 1);
@@ -12,18 +8,8 @@ N = size(returns, 1);
 n = size(returns,2);
 %Number of columns in factor table
 nFactCols = size(factRet,2);
-%Load the risk-free rate for each period from Project_Data_FF_Factors.csv
-factTable = readtable('Project1_Data_FF_factors.csv');
-%Obtain the risk-free rate for each period
-rf= factTable(:,5);
-rf = table2array(rf);
 
-% CAPM requires the use of excess returns
-exRets = zeros(N,n);
-for i = 1: n
-    exRets(:,i)   = returns(:,i) - rf(:,1);
-    
-end
+
 
 
 
@@ -50,7 +36,7 @@ display(X);
 
 % 2.3 Use the closed-form (CF) solution to find the collection of alphas 
 % and betas for all assets
-temp = inv(transpose(X)* X)*transpose(X)*exRets;
+temp = inv(transpose(X)* X)*transpose(X)*returns;
  alpha  = temp(1,:);
  temp_betaCF = temp(2,:);
  betaCF = transpose(temp_betaCF);
@@ -73,10 +59,10 @@ display([betaCF]);
 % - residual variance (i.e., idiosyncratic risk)
 
 % Calculate the residuals
-epsilon = exRets - X*temp;
+epsilon = returns - X*temp;
 for i = 1:n
     for t = 1:N
-    epsilon(t,i) = (exRets(t,i) - rf(t,1)) - (alpha(i) + betaCF(i)*(expExFactRet(1))); 
+    epsilon(t,i) = (returns(t,i)) - (alpha(i) + betaCF(i)*(expExFactRet(1))); 
     end
    end
 % Calculate the residual variance with "N - p - 1" degrees of freedom
