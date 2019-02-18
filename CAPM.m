@@ -8,43 +8,24 @@ N = size(returns, 1);
 n = size(returns,2);
 %Number of columns in factor table
 nFactCols = size(factRet,2);
-
-
-
-
-
 % Calculate the factor expected excess return from historical data using
 % the geometric mean
 expExFactRet = geomean(factRet + 1) - 1;
-
-
 % Calculate the factor variance
 sigmaF = var(factRet);
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PART 2: Beta estimate 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 % The function regress(y,X) requires a response vector y and a predictor
 % matrix X. The matrix X must include a column of ones to account for the
 % intercept alpha.
-
  X = [ones(N,1) factRet(:,1)];
-display(X);
-
-
 Use the closed-form (CF) solution to find the collection of alphas 
 % and betas for all assets
 temp = inv(transpose(X)* X)*transpose(X)*returns;
  alpha  = temp(1,:);
  temp_betaCF = temp(2,:);
  betaCF = transpose(temp_betaCF);
-% Display your three estimates of beta for all assets
-display([betaCF]);
-
-%Conclude that using the three methods yields the same Betas for all assets
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PART 3: Portfolio optimization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
