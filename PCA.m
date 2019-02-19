@@ -23,13 +23,16 @@ function  [mu, Q] = PCA(returns, varargin)
     cov_mat = cov(returns); % creates a covariance matrix of returns
     [V,D] = eig(cov_mat) % V -> matrix of eigenvectors, D -> diag(eigenvalues corresponding to vectors in V)
     [m,n] = size(returns) % gets how big f should be if we don't have K
-    f = ones(n);
-
+    f = ones(m, n);
 
     V_inv = inv(V);
-    for i = 1:n
-        f(i) = V(i)*returns;
+    for r = 1:m
+      for c = 1:n
+        f(r, c) = V_inv(:, c)*returns(r, :);
+      end
     end
-
-    [mu, Q] = FF(returns, f);
+    for i = 1:c
+      f(1, i) = geom(f(:, i))
+    end
+    [mu, Q] = FF(returns, f(1,:));
 end
