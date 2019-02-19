@@ -25,14 +25,11 @@ function  [mu, Q] = PCA(returns, varargin)
     [m,n] = size(returns) % gets how big f should be if we don't have K
     f = ones(m, n);
 
-    V_inv = inv(V);
+     V_inv = inv(V);
     for r = 1:m
       for c = 1:n
-        f(r, c) = V_inv(:, c)*returns(r, :);
+        f(r, c) =returns(r, :)*V_inv(:, c);
       end
     end
-    for i = 1:c
-      f(1, i) = geom(f(:, i))
-    end
-    [mu, Q] = FF(returns, f(1,:));
+    [mu, Q] = FF(returns, f);
 end
