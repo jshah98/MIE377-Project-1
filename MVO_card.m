@@ -7,10 +7,15 @@ function  x = MVO_card(mu, Q, targetRet, card)
     % You may use Gurobi or any other optimizer that is able to solve mixed
     % integer programs (MIPs). Just be sure to comment on your code to
     % (briefly) explain your procedure.
-
+    
+    lBuy = 0; 
+    uBuy = 1; 
+    mu = [mu ; zeros(n,1)]; 
+    Q  = [Q zeros(n);zeros(n,2*n)];
+    
     % Find the total number of assets
     n = size(Q,1);
-
+    
     B = [-eye(n) lBuy*eye(n); eye(n) -uBuy*eye(n)];
     A = [B;-1*transpose(mu) ];
     b = [zeros(2*n,1);-targetRet];
