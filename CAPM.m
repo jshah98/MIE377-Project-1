@@ -1,6 +1,4 @@
 function  [mu, Q] = CAPM(returns, factRet)
-    
-    % Use this function to perform a linear regression model for CAPM.
 
 % Number of observations;
 N = size(returns, 1);
