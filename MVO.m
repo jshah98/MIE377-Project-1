@@ -15,5 +15,5 @@ function  x = MVO(mu, Q, targetRet, varargin)
     options = optimoptions( 'quadprog', 'TolFun', 1e-9 );
     % quadprog (below) minimizes 0.5*x' * Q *x s.t. -1*mu*x <= targetRet, [col of ones] * x = 1, and 0 <= xi <= 1
 
-    x = quadprog(Q, f, -1*mu, targetRet, ones(1, n), 1, zeros(1,n), ones(1,n),[],options)
+    x = quadprog(Q, f, -1*transpose(mu), targetRet, ones(1, n), 1, zeros(1,n), ones(1,n),[],options)
 end
