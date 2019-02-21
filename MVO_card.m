@@ -10,14 +10,15 @@ function  x = MVO_card(mu, Q, targetRet, card)
     
     lBuy = 0; 
     uBuy = 1; 
+    
     n = size(mu,1);
+
     mu = [mu ; zeros(n,1)]; 
     Q  = [Q zeros(n);zeros(n,2*n)];
     
-    % Find the total number of assets
-    n = size(Q,1);
-    
+ 
     B = [-eye(n) lBuy*eye(n); eye(n) -uBuy*eye(n)];
+ 
     A = [B;-1*transpose(mu) ];
     b = [zeros(2*n,1);-targetRet];
     Aeq = [ones(1,n) zeros(1,n); zeros(1,n) ones(1,n)];
@@ -38,6 +39,12 @@ function  x = MVO_card(mu, Q, targetRet, card)
     model.ub = ub;
 
     clear params;
+    params.TimeLimit = 100;
+    params.OutputFlag = 0;
+
+    x = gurobi(model,params);
+
+end
     params.TimeLimit = 100;
     params.OutputFlag = 0;
 
