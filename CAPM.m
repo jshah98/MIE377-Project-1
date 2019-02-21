@@ -18,7 +18,7 @@ sigmaF = var(factRet);
 % matrix X. The matrix X must include a column of ones to account for the
 % intercept alpha.
  X = [ones(N,1) factRet(:,1)];
-Use the closed-form (CF) solution to find the collection of alphas 
+%Use the closed-form (CF) solution to find the collection of alphas 
 % and betas for all assets
 temp = inv(transpose(X)* X)*transpose(X)*returns;
  alpha  = temp(1,:);
