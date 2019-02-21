@@ -10,6 +10,7 @@ function  x = MVO_card(mu, Q, targetRet, card)
     
     lBuy = 0; 
     uBuy = 1; 
+    n = size(mu,1);
     mu = [mu ; zeros(n,1)]; 
     Q  = [Q zeros(n);zeros(n,2*n)];
     
