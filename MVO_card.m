@@ -45,9 +45,4 @@ function  x = MVO_card(mu, Q, targetRet, card)
     x = gurobi(model,params);
 
 end
-    params.TimeLimit = 100;
-    params.OutputFlag = 0;
 
-    x = gurobi(model,params);
-
-end
